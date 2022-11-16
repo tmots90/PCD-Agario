@@ -27,7 +27,7 @@ public class Game extends Observable {
 			for (int y = 0; y < Game.DIMY; y++) 
 				board[x][y] = new Cell(new Coordinate(x, y),this);
 	}
-	
+
 	/** 
 	 * @param player 
 	 */
@@ -58,42 +58,45 @@ public class Game extends Observable {
 		Cell newCell=getCell(new Coordinate((int)(Math.random()*Game.DIMX),(int)(Math.random()*Game.DIMY)));
 		return newCell; 
 	}
-	
+
 	public synchronized void move(Player p) throws InterruptedException {
-// gerar a direcao pa mover
+		// gerar a direcao pa mover
 		p.th.sleep(REFRESH_INTERVAL);
 		System.out.print(p.getIdentification()+" a mexer de "+ p.getPosition().toString()+"\n");
 		Direction[] hipoteses = { Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT };
 		int d = (int) (Math.random() * hipoteses.length);
 		p.next=hipoteses[d];
-// mexer o ghost
+		// mexer o player
 		moveTo(p, p.next);
 	}
 	public synchronized void moveTo(Player entity, Direction direction) throws InterruptedException { 
-//		int y = (int) entity.getLocation().getY();
-//		int x = (int) entity.getLocation().getX();
-		Coordinate future = null; 
-		Coordinate pre= entity.getPosition();	
-		System.out.println(entity.getIdentification() + " - origem: "+pre.toString());
-		switch (direction) {
-				case UP: {//
-					future = pre.translate(Direction.UP.getVector());break;
-				}
-				case DOWN: {
-					future = pre.translate(Direction.DOWN.getVector());break;
-				}
-				case LEFT: {
-					future = pre.translate(Direction.LEFT.getVector());break;
-				}
-				case RIGHT: {
-					future = pre.translate(Direction.RIGHT.getVector());break;
-				}
+		if (entity.ronda%entity.originalStrength==0) {
+			Coordinate future = null; 
+			Coordinate pre= entity.getPosition();	
+			System.out.println(entity.getIdentification() + " - origem: "+pre.toString());
+			switch (direction) {
+			case UP: {//
+				future = pre.translate(Direction.UP.getVector());break;
 			}
-			
-		System.out.println(entity.getIdentification() + " - destino: "+future.toString());
+			case DOWN: {
+				future = pre.translate(Direction.DOWN.getVector());break;
+			}
+			case LEFT: {
+				future = pre.translate(Direction.LEFT.getVector());break;
+			}
+			case RIGHT: {
+				future = pre.translate(Direction.RIGHT.getVector());break;
+			}
+			}
 
-		entity.setPosition(getCell(future));
-		notifyChange();
-		System.out.println("origem:"+ getCell(pre).isOcupied()+ "| destino:" + getCell(future).isOcupied() );
+			System.out.println(entity.getIdentification() + " - destino: "+future.toString());
+
+			entity.setPosition(getCell(future));
+			notifyChange();
+			System.out.println("origem:"+ getCell(pre).isOcupied()+ "| destino:" + getCell(future).isOcupied() );
+		} else 
+			System.out.println("Player "+entity.getIdentification()+"mexe em "+((int)(entity.originalStrength)-entity.getOriginalStrength()));
+
+		entity.ronda++;
 	}
 }

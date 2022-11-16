@@ -6,8 +6,8 @@ package game;
  *
  */
 public class PhoneyHumanPlayer extends Player {
-	public PhoneyHumanPlayer(int id, Game game, byte strength) {
-		super(id, game, strength);
+	public PhoneyHumanPlayer(int id, Game game) {
+		super(id, game);
 	}
 
 	public boolean isHumanPlayer() {

@@ -44,7 +44,7 @@ public class GameGuiMain implements Observer {
 		}
 		Player p= null;
 		for (int i = 0; i<3; i++) { 
-			p=new PhoneyHumanPlayer((i+1), game, (byte)(i+1));
+			p=new PhoneyHumanPlayer((i+1), game);
 			game.addPlayerToGame(p);
 			p.th.start();
 			System.out.println("Jogador "+i+"lançado c sucesso\n\n\n\n");

@@ -22,6 +22,7 @@ public abstract class Player implements Runnable {
 
 	public Cell pos;
 	public Direction next;
+	public int ronda;
 
 	public Thread th;
 
@@ -30,15 +31,17 @@ public abstract class Player implements Runnable {
 		return pos;
 	}
 
-	public Player(int id, Game game, byte strength) {
+	public Player(int id, Game game) {
 		super();
 		this.id = id;
 		this.game=game;
+		byte strength= (byte) (1 + Math.random() * 3);
 		currentStrength=strength;
 		originalStrength=strength;
 		this.pos=pos;
 		Thread p=new Thread(this);
 		this.th=p;
+		System.out.println("Sou o player " +id+" e tenho "+strength+" de força");
 	}
 
 	public abstract boolean isHumanPlayer();
@@ -75,7 +78,10 @@ public abstract class Player implements Runnable {
 		return currentStrength;
 	}
 
-
+	public byte getOriginalStrength() {
+		return originalStrength;
+	}
+	
 	public int getIdentification() {
 		return id;
 	}
