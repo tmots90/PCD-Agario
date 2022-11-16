@@ -79,10 +79,40 @@ public abstract class Player implements Runnable {
 	public int getIdentification() {
 		return id;
 	}
-	public Coordinate getPosition() {
+	
+public Coordinate getPosition() {
 		return pos.getPosition();
 	}
+<<<<<<< Updated upstream:Projeto2022Agar.io_/src/game/Player.java
 
+=======
+	
+	public void setPosition(Cell c) {
+		 if(pos!=null)
+			 this.game.getCell(pos.getPosition()).removePlayer();
+		 c.setPlayer(this);
+		 pos=c;
+	}
+	
+	public void absorve(Player s) {
+		this.currentStrength+=s.getCurrentStrength();
+		s.death();
+		if (this.getCurrentStrength()>=(byte) 10) {
+			this.currentStrength=10;
+			//ganhou
+			System.out.println("Player "+this.getIdentification()+" chegou à energia maxima!!\n-_-_-_-_-_-_-_-_-_-_-_-_-_");
+			}//upgrade
+		System.out.println("O player "+this.getIdentification()+" chegou a "+this.getCurrentStrength()+" de energia");
+	}
+	
+	private void death() {
+		this.currentStrength=0;
+		this.isDead=true;
+		System.out.println("\nO jogador "+ this.getIdentification() + "morreu na ronda "+this.ronda+".\n#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|\n");
+		this.th.stop();
+	}	
+	
+>>>>>>> Stashed changes:Projeto2022Agar.io/src/game/Player.java
 	public void run() {
 		System.out.print("bom dia ...\n" + id + "\n");
 //		try {
