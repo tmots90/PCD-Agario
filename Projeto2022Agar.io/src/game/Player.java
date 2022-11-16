@@ -82,6 +82,13 @@ public abstract class Player implements Runnable {
 	public Coordinate getPosition() {
 		return pos.getPosition();
 	}
+	
+	public void setPosition(Cell c) {
+		 if(pos!=null)
+			 this.game.getCell(pos.getPosition()).removePlayer();
+		 c.setPlayer(this);
+		 pos=c;
+	}
 
 	public void run() {
 		System.out.print("bom dia ...\n" + id + "\n");

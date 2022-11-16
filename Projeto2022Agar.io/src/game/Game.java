@@ -33,12 +33,13 @@ public class Game extends Observable {
 	 */
 	public void addPlayerToGame(Player player) {
 		Cell initialPos=getRandomCell();
+		System.out.println("posicão original do player "+player.getIdentification()+":"+initialPos.getPosition().toString());
 		initialPos.setPlayer(player);
-		player.pos= initialPos;
+		player.setPosition(initialPos);
 		// To update GUI 
 		notifyChange();
-		player.th.run();
-		
+		player.run();
+		System.out.println(player.getIdentification()+" lançado");
 	}
 
 	public Cell getCell(Coordinate at) {
@@ -59,12 +60,13 @@ public class Game extends Observable {
 	}
 	
 	public synchronized void move(Player p) throws InterruptedException {
+// gerar a direcao pa mover
 		p.th.sleep(REFRESH_INTERVAL);
 		System.out.print(p.getIdentification()+" a mexer de "+ p.getPosition().toString()+"\n");
 		Direction[] hipoteses = { Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT };
 		int d = (int) (Math.random() * hipoteses.length);
 		p.next=hipoteses[d];
-// receber a direcao pa mover e mexer o ghost
+// mexer o ghost
 		moveTo(p, p.next);
 	}
 	public synchronized void moveTo(Player entity, Direction direction) throws InterruptedException { 
@@ -90,8 +92,7 @@ public class Game extends Observable {
 			
 		System.out.println(entity.getIdentification() + " - destino: "+future.toString());
 
-		getCell(pre).removePlayer();	
-		getCell(future).setPlayer(entity);
+		entity.setPosition(getCell(future));
 		notifyChange();
 		System.out.println("origem:"+ getCell(pre).isOcupied()+ "| destino:" + getCell(future).isOcupied() );
 	}
