@@ -1,5 +1,6 @@
 package game;
 import environment.Direction;
+import gui.BoardJComponent;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,11 @@ public class Game extends Observable {
 	public static final long INITIAL_WAITING_TIME = 10000;
 
 	protected Cell[][] board;
+	public Direction keyD;
+	//humano teste
+	public HumanPlayer human;
+
+
 
 	public Game() {
 		board = new Cell[Game.DIMX][Game.DIMY];
@@ -61,21 +67,29 @@ public class Game extends Observable {
 	public synchronized void move(Player p) throws InterruptedException {
 		// gerar a direcao pa mover
 		p.th.sleep(REFRESH_INTERVAL);
-		System.out.print(p.getIdentification()+" a mexer de "+ p.getPosition().toString()+"\n");
-		Direction[] hipoteses = { Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT };
-		int d = (int) (Math.random() * hipoteses.length);
-		p.next=hipoteses[d];
+		if(!p.isHumanPlayer()) {
+			Direction[] hipoteses = { Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT };
+			int d = (int) (Math.random() * hipoteses.length);
+			p.next=hipoteses[d];
+		}
+		//no caso de ser humano o objecto segue a indicaÃ§Ã£o das teclas, guardada no atributo next (nao implementado)
 		// mexer o player
+		else {
+			System.out.println("\nHumano a querer mexer na direcao"+keyD+"\n");
+			p.next=keyD;
+		}
 		moveTo(p, p.next);
 	}
 	public synchronized void moveTo(Player entity, Direction direction) throws InterruptedException { 
+		System.out.print(entity.getIdentification()+" a mexer de "+ entity.getPosition().toString()+"\nronda - "+entity.ronda);
 		if (entity.ronda%entity.originalStrength==0) {
 			Coordinate future = null; 
 			Coordinate pre= entity.getPosition();
 			int x=pre.x;
 			int y=pre.y;
 			System.out.println(entity.getIdentification() + " - origem: "+pre.toString());
-			switch (direction) {
+			if(direction!=null)
+				switch (direction) {
 				case UP: {
 					if(y-1 >= 0)
 						future = pre.translate(Direction.UP.getVector());
@@ -96,18 +110,19 @@ public class Game extends Observable {
 						future = pre.translate(Direction.RIGHT.getVector());
 					break;
 				}
-			}
+				}
 			if(future!= null) {
 				System.out.println(entity.getIdentification() + " - destino: "+future.toString());
 				entity.setPosition(getCell(future));
 				notifyChange();
-				System.out.println("origem:"+ getCell(pre).isOcupied()+ "| destino:" + getCell(future).isOcupied() );
+				System.out.println("origem:"+ getCell(pre).isOcupied()+ "| destino:" + getCell(future).isOcupied());
+//				if (entity.isHumanPlayer())
+//					keyD=null;
 			} else {
-				System.out.println("Posição de destino out of bounds!");
-			}
+				System.out.println("PosiÃ§ao de destino out of bounds!");
+			} 
 		} else 
-			System.out.println("Player "+entity.getIdentification()+"mexe em "+((int)(entity.originalStrength)-entity.getOriginalStrength()));
-
+			System.out.println("Player "+entity.getIdentification()+"mexe em "+(entity.ronda%entity.originalStrength));
 		entity.ronda++;
 	}
 }

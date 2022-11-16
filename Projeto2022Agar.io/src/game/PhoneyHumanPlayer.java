@@ -11,6 +11,6 @@ public class PhoneyHumanPlayer extends Player {
 	}
 
 	public boolean isHumanPlayer() {
-		return true;
+		return false;
 	}
 }

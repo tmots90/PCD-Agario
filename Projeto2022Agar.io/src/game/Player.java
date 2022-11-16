@@ -6,7 +6,6 @@ import environment.Direction;
 import environment.Coordinate;
 /**
  * Represents a player.
- * @author luismota
  *
  */
 public abstract class Player implements Runnable {

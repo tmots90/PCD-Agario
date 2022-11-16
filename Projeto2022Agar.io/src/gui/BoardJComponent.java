@@ -67,6 +67,16 @@ public class BoardJComponent extends JComponent implements KeyListener {
 						// if player is dead, don'd draw anything else?
 						continue;
 					}
+					// Fill red if it is a phoney
+					if(!player.isHumanPlayer()) {
+						g.setColor(Color.BLUE);
+						g.fillRect((int)(p.x* cellWidth), 
+								(int)(p.y * cellHeight),
+								(int)(cellWidth),(int)(cellHeight));
+						// Custom icon?
+						g.drawImage(humanPlayerImage, (int)(p.x * cellWidth), (int)(p.y*cellHeight), 
+								(int)(cellWidth),(int)(cellHeight), null);
+					}
 					// Fill green if it is a human player
 					if(player.isHumanPlayer()) {
 						g.setColor(Color.GREEN);
@@ -91,19 +101,19 @@ public class BoardJComponent extends JComponent implements KeyListener {
 	}
 
 	@Override
-	public void keyPressed(KeyEvent e) {
+	public void keyPressed(KeyEvent e) { System.out.println("");
 		switch(e.getKeyCode()){
 		case KeyEvent.VK_LEFT :
-			lastPressedDirection=environment.Direction.LEFT;
+			game.keyD=environment.Direction.LEFT; System.out.println("left");
 			break;
 		case KeyEvent.VK_RIGHT:
-			lastPressedDirection=environment.Direction.RIGHT;
+			game.keyD=environment.Direction.RIGHT; System.out.println("right");
 			break;
 		case KeyEvent.VK_UP:
-			lastPressedDirection=environment.Direction.UP;
+			game.keyD=environment.Direction.UP; System.out.println("up");
 			break;
 		case KeyEvent.VK_DOWN:
-			lastPressedDirection=environment.Direction.DOWN;
+			game.keyD=environment.Direction.DOWN; System.out.println("down");
 			break;
 		}
 	}
@@ -120,10 +130,10 @@ public class BoardJComponent extends JComponent implements KeyListener {
 	}
 
 	public Direction getLastPressedDirection() {
-		return lastPressedDirection;
+		return game.keyD;
 	}
 
 	public void clearLastPressedDirection() {
-		lastPressedDirection=null;
+		game.keyD=null;
 	}
 }
