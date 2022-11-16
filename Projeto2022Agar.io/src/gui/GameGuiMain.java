@@ -12,6 +12,7 @@ public class GameGuiMain implements Observer {
 	private JFrame frame = new JFrame("pcd.io");
 	private BoardJComponent boardGui;
 	private Game game;
+	private static final int NUMBER_PLAYERS =3;
 
 	public GameGuiMain() {
 		super();
@@ -43,7 +44,7 @@ public class GameGuiMain implements Observer {
 			e.printStackTrace();
 		}
 		Player p= null;
-		for (int i = 0; i<3; i++) { 
+		for (int i = 0; i<NUMBER_PLAYERS; i++) { 
 			p=new PhoneyHumanPlayer((i+1), game);
 			game.addPlayerToGame(p);
 			p.th.start();

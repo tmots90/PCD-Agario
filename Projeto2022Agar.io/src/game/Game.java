@@ -38,7 +38,6 @@ public class Game extends Observable {
 		player.setPosition(initialPos);
 		// To update GUI 
 		notifyChange();
-		player.run();
 		System.out.println(player.getIdentification()+" lanÃ§ado");
 	}
 
@@ -72,28 +71,40 @@ public class Game extends Observable {
 	public synchronized void moveTo(Player entity, Direction direction) throws InterruptedException { 
 		if (entity.ronda%entity.originalStrength==0) {
 			Coordinate future = null; 
-			Coordinate pre= entity.getPosition();	
+			Coordinate pre= entity.getPosition();
+			int x=pre.x;
+			int y=pre.y;
 			System.out.println(entity.getIdentification() + " - origem: "+pre.toString());
 			switch (direction) {
-			case UP: {//
-				future = pre.translate(Direction.UP.getVector());break;
+				case UP: {
+					if(y-1 >= 0)
+						future = pre.translate(Direction.UP.getVector());
+					break;
+				}
+				case DOWN: {
+					if(y+1 < DIMY)
+						future = pre.translate(Direction.DOWN.getVector());
+					break;
+				}
+				case LEFT: {
+					if(x-1 >= 0)
+						future = pre.translate(Direction.LEFT.getVector());
+					break;
+				}
+				case RIGHT: {
+					if(x+1 < DIMX)
+						future = pre.translate(Direction.RIGHT.getVector());
+					break;
+				}
 			}
-			case DOWN: {
-				future = pre.translate(Direction.DOWN.getVector());break;
+			if(future!= null) {
+				System.out.println(entity.getIdentification() + " - destino: "+future.toString());
+				entity.setPosition(getCell(future));
+				notifyChange();
+				System.out.println("origem:"+ getCell(pre).isOcupied()+ "| destino:" + getCell(future).isOcupied() );
+			} else {
+				System.out.println("Posição de destino out of bounds!");
 			}
-			case LEFT: {
-				future = pre.translate(Direction.LEFT.getVector());break;
-			}
-			case RIGHT: {
-				future = pre.translate(Direction.RIGHT.getVector());break;
-			}
-			}
-
-			System.out.println(entity.getIdentification() + " - destino: "+future.toString());
-
-			entity.setPosition(getCell(future));
-			notifyChange();
-			System.out.println("origem:"+ getCell(pre).isOcupied()+ "| destino:" + getCell(future).isOcupied() );
 		} else 
 			System.out.println("Player "+entity.getIdentification()+"mexe em "+((int)(entity.originalStrength)-entity.getOriginalStrength()));
 
