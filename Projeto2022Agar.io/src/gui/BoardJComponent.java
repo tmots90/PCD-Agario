@@ -69,7 +69,7 @@ public class BoardJComponent extends JComponent implements KeyListener {
 					}
 					// Fill red if it is a phoney
 					if(!player.isHumanPlayer()) {
-						g.setColor(Color.BLUE);
+						g.setColor(Color.MAGENTA);
 						g.fillRect((int)(p.x* cellWidth), 
 								(int)(p.y * cellHeight),
 								(int)(cellWidth),(int)(cellHeight));
@@ -101,7 +101,7 @@ public class BoardJComponent extends JComponent implements KeyListener {
 	}
 
 	@Override
-	public void keyPressed(KeyEvent e) { System.out.println("");
+	public void keyPressed(KeyEvent e) { 
 		switch(e.getKeyCode()){
 		case KeyEvent.VK_LEFT :
 			game.keyD=environment.Direction.LEFT; System.out.println("left");

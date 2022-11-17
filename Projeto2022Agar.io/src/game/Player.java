@@ -84,8 +84,13 @@ public abstract class Player implements Runnable {
 	public int getIdentification() {
 		return id;
 	}
+	
 	public Coordinate getPosition() {
 		return pos.getPosition();
+	}
+	
+	public boolean isAlive() {
+		return !this.isDead;
 	}
 	
 	public void setPosition(Cell c) {
@@ -94,20 +99,37 @@ public abstract class Player implements Runnable {
 		 c.setPlayer(this);
 		 pos=c;
 	}
-
+	
+	public void absorbs(Player s) {
+		this.currentStrength+=s.getCurrentStrength();
+		s.death();
+		if ((int) this.getCurrentStrength()>= 10) {
+			this.currentStrength=10;
+			//ganhou
+			System.out.println("Player "+this.getIdentification()+" chegou à energia maxima!!\n-_-_-_-_-_-_-_-_-_-_-_-_-_");
+		}else{//upgrade
+		System.out.println("O player "+this.getIdentification()+" chegou a "+this.getCurrentStrength()+" de energia");}
+	}
+	
+	private void death() {
+		this.currentStrength=0;
+		this.isDead=true;
+		System.out.println("\nO jogador "+ this.getIdentification() + " morreu na ronda "+this.ronda+".\n#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|\n");
+		this.th.stop();
+	}	
+	
 	public void run() {
-		System.out.print("bom dia ...\n" + id + "\n");
-//		try {
-//			th.sleep(10000);
-//		} catch (InterruptedException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		System.out.print("pronto a correr"+ id +"\n");
+		try {
+			th.sleep(10000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.print("pronto a correr "+ id +"\n");
 		for(;;){
 			try {
 				game.move(this);
-				th.sleep(500);
+				th.sleep(400);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

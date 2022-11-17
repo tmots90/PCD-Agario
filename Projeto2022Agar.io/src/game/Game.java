@@ -35,16 +35,16 @@ public class Game extends Observable {
 	}
 
 	/** 
-	 * @param player 
+	 * @param p - player
 	 */
-	public void addPlayerToGame(Player player) {
+	public void addPlayerToGame(Player p) {
 		Cell initialPos=getRandomCell();
-		System.out.println("posicão original do player "+player.getIdentification()+":"+initialPos.getPosition().toString());
-		initialPos.setPlayer(player);
-		player.setPosition(initialPos);
+		System.out.println("posicão original do player "+p.getIdentification()+": "+initialPos.getPosition().toString());
+		initialPos.setPlayer(p);
+		p.setPosition(initialPos);
 		// To update GUI 
 		notifyChange();
-		System.out.println(player.getIdentification()+" lançado");
+		//		System.out.println(player.getIdentification()+" lançado");
 	}
 
 	public Cell getCell(Coordinate at) {
@@ -66,7 +66,6 @@ public class Game extends Observable {
 
 	public synchronized void move(Player p) throws InterruptedException {
 		// gerar a direcao pa mover
-		p.th.sleep(REFRESH_INTERVAL);
 		if(!p.isHumanPlayer()) {
 			Direction[] hipoteses = { Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT };
 			int d = (int) (Math.random() * hipoteses.length);
@@ -75,19 +74,20 @@ public class Game extends Observable {
 		//no caso de ser humano o objecto segue a indicação das teclas, guardada no atributo next (nao implementado)
 		// mexer o player
 		else {
-			System.out.println("\nHumano a querer mexer na direcao"+keyD+"\n");
+			//			System.out.println("\nHumano a querer mexer na direcao"+keyD+"\n");
 			p.next=keyD;
 		}
 		moveTo(p, p.next);
 	}
-	public synchronized void moveTo(Player entity, Direction direction) throws InterruptedException { 
-		System.out.print(entity.getIdentification()+" a mexer de "+ entity.getPosition().toString()+"\nronda - "+entity.ronda);
-		if (entity.ronda%entity.originalStrength==0) {
+
+	public synchronized void moveTo(Player p, Direction direction) throws InterruptedException { 
+		//		System.out.print(entity.getIdentification()+" a mexer de "+ entity.getPosition().toString()+"\nronda - "+entity.ronda);
+		if (p.ronda%p.originalStrength==0) {
 			Coordinate future = null; 
-			Coordinate pre= entity.getPosition();
+			Coordinate pre= p.getPosition();
 			int x=pre.x;
 			int y=pre.y;
-			System.out.println(entity.getIdentification() + " - origem: "+pre.toString());
+			//			System.out.println(entity.getIdentification() + " - origem: "+pre.toString());
 			if(direction!=null)
 				switch (direction) {
 				case UP: {
@@ -111,18 +111,45 @@ public class Game extends Observable {
 					break;
 				}
 				}
-			if(future!= null) {
-				System.out.println(entity.getIdentification() + " - destino: "+future.toString());
-				entity.setPosition(getCell(future));
+			if(future!= null && !getCell(future).isOcupied()) {
+				System.out.println(p.getIdentification() + " - destino: "+future.toString()+ " - ronda "+ p.ronda);
+				p.setPosition(getCell(future));
 				notifyChange();
-				System.out.println("origem:"+ getCell(pre).isOcupied()+ "| destino:" + getCell(future).isOcupied());
-//				if (entity.isHumanPlayer())
-//					keyD=null;
-			} else {
-				System.out.println("Posiçao de destino out of bounds!");
-			} 
-		} else 
-			System.out.println("Player "+entity.getIdentification()+"mexe em "+(entity.ronda%entity.originalStrength));
-		entity.ronda++;
+				//				System.out.println("origem:"+ getCell(pre).isOcupied()+ "| destino:" + getCell(future).isOcupied());
+				//				if (entity.isHumanPlayer())
+				//					keyD=null;
+			} else if(future==null) {
+				System.out.println("Posiçao de destino out of bounds para o player: "+p.getIdentification()+"!"); 
+			} else
+				if (getCell(future).getPlayer().isAlive())
+					fight(p,getCell(future).getPlayer());
+				else {// apenas os phoneys ficam presos
+					if(p instanceof PhoneyHumanPlayer) {
+						p.th.wait(); 
+						System.out.println("Phoney "+p.getIdentification()+" got stuck");
+					}
+				}
+
+		} else{
+			if(p.getCurrentStrength()!=10)
+				System.out.println("Player "+p.getIdentification()+" apenas mexe em "+(p.originalStrength-p.ronda%p.originalStrength)+" rondas");
+		} 	
+		p.ronda++;
 	}
+
+	private synchronized void fight(Player a, Player b) {
+		if (a.getCurrentStrength()==b.getCurrentStrength()) {
+			int i= (int) Math.random()*2;
+			if(i==0) {
+				a.absorbs(b);
+			}else {
+				b.absorbs(a);
+			}				
+		} else 
+			if (a.getCurrentStrength()<b.getCurrentStrength())
+				b.absorbs(a);
+			else
+				a.absorbs(b);
+	}
+
 }
