@@ -39,7 +39,7 @@ public class Game extends Observable {
 	 */
 	public void addPlayerToGame(Player p) {
 		Cell initialPos=getRandomCell();
-		System.out.println("posicão original do player "+p.getIdentification()+":"+initialPos.getPosition().toString());
+		System.out.println("posicão original do player "+p.getIdentification()+": "+initialPos.getPosition().toString());
 		initialPos.setPlayer(p);
 		p.setPosition(initialPos);
 		// To update GUI 
@@ -66,7 +66,6 @@ public class Game extends Observable {
 
 	public synchronized void move(Player p) throws InterruptedException {
 		// gerar a direcao pa mover
-		p.th.sleep(REFRESH_INTERVAL);
 		if(!p.isHumanPlayer()) {
 			Direction[] hipoteses = { Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT };
 			int d = (int) (Math.random() * hipoteses.length);
@@ -113,14 +112,14 @@ public class Game extends Observable {
 				}
 				}
 			if(future!= null && !getCell(future).isOcupied()) {
-				System.out.println(p.getIdentification() + " - destino: "+future.toString());
+				System.out.println(p.getIdentification() + " - destino: "+future.toString()+ " - ronda "+ p.ronda);
 				p.setPosition(getCell(future));
 				notifyChange();
 				//				System.out.println("origem:"+ getCell(pre).isOcupied()+ "| destino:" + getCell(future).isOcupied());
 				//				if (entity.isHumanPlayer())
 				//					keyD=null;
 			} else if(future==null) {
-				System.out.println("Posiçao de destino out of bounds!"); 
+				System.out.println("Posiçao de destino out of bounds para o player: "+p.getIdentification()+"!"); 
 			} else
 				if (getCell(future).getPlayer().isAlive())
 					fight(p,getCell(future).getPlayer());
@@ -131,9 +130,11 @@ public class Game extends Observable {
 					}
 				}
 
-		} else 
-			//			System.out.println("Player "+entity.getIdentification()+"mexe em "+(entity.ronda%entity.originalStrength));
-			p.ronda++;
+		} else{
+			if(p.getCurrentStrength()!=10)
+				System.out.println("Player "+p.getIdentification()+" apenas mexe em "+(p.originalStrength-p.ronda%p.originalStrength)+" rondas");
+		} 	
+		p.ronda++;
 	}
 
 	private synchronized void fight(Player a, Player b) {

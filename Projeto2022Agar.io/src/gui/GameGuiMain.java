@@ -13,7 +13,7 @@ public class GameGuiMain implements Observer {
 	private JFrame frame = new JFrame("pcd.io");
 	private BoardJComponent boardGui;
 	private Game game;
-	private static final int NUMBER_PLAYERS =7;
+	private static final int NUMBER_PLAYERS =9;
 
 	public GameGuiMain() {
 		super();
@@ -37,23 +37,22 @@ public class GameGuiMain implements Observer {
 	public void init()  {
 		frame.setVisible(true);
 
-		// Demo players, should be deleted
 		try {
 			Thread.sleep(3000);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Player p= new HumanPlayer(10,game);
+		Player p= new HumanPlayer(90,game);
 		game.human=(HumanPlayer) p;
 		game.addPlayerToGame(p);
 		p.th.start();
-		System.out.println("\n\nJogador "+p.getIdentification()+" lançado c sucesso\nHumano\n");
+		System.out.println("Jogador Humano "+p.getIdentification()+" lancado com sucesso\n\n");
 		for (int i = 0; i<NUMBER_PLAYERS; i++) { 
 			p=new PhoneyHumanPlayer((i+1), game);
 			game.addPlayerToGame(p);
 			p.th.start();
-			System.out.println("\n\nJogador "+i+" lançado c sucesso\n\n");
+			System.out.println("Jogador "+(i+1)+" lancado com sucesso\n\n");
 		}
 	}
 
